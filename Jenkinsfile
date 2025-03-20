@@ -8,7 +8,6 @@ pipeline {
     triggers {
             pollSCM('* * * * *')
     }
-
     stages{
 
         // Stage 1: Build and Package Microservices
@@ -17,7 +16,7 @@ pipeline {
                 branch 'staging'
             }
             steps {
-                git branch: 'staging', url: 'https://github.com/nmtndl2/java-microservice-webclient-docker.git'
+                git branch: 'staging', url: 'https://github.com/nmtndl2/java-jenkins-docker.git'
                 script {
                     try{
                         def services = ['QuizService', 'QuestionService', 'ApiGateway', 'ServiceRegistry']
@@ -42,7 +41,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                git branch: 'main', url: 'https://github.com/nmtndl2/java-microservice-webclient-docker.git'
+                git branch: 'main', url: 'https://github.com/nmtndl2/java-jenkins-docker.git'
                 script {
                     try{
                         def services = ['QuizService', 'QuestionService', 'ApiGateway', 'ServiceRegistry']
@@ -107,7 +106,7 @@ pipeline {
                 branch 'main'
             }
             steps {
-                git branch: 'main', url: 'https://github.com/nmtndl2/java-microservice-webclient-docker.git'
+                git branch: 'main', url: 'https://github.com/nmtndl2/java-jenkins-docker.git'
                 script {
                     try{
                         bat """
