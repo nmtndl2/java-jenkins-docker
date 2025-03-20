@@ -1,0 +1,77 @@
+services:
+  service-registry:
+    build: ./ServiceRegistry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-network
+
+  quiz-service:
+    build: ./QuizService
+    container_name: quiz-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/microservice
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    networks:
+      - microservices-network
+    deploy:
+      replicas: 1
+
+  question-service:
+    build: ./QuestionService
+    container_name: question-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/microservice
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    networks:
+      - microservices-network
+
+
+  api-gateway:
+    build: ./ApiGateway
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - service-registry
+      - quiz-service
+      - question-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    networks:
+      - microservices-network
+
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: microservice
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+volumes:
+  mysql_data:
+
+
+networks:
+  microservices-network:
+    driver: bridge
