@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
     }
-    // every 1 minute
+    // every 1 minutes
     triggers {
             pollSCM('* * * * *')
     }
